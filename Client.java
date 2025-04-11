@@ -8,7 +8,7 @@ public class Client
     private PrintWriter out;
     private BufferedReader in;
 
-    public Client(String host, int port) 
+    public Client(String host, int port) throws Exception
     {
         this.socket = new Socket(host,port);
         this.out = new PrintWriter(socket.getOutputStream(), true);
@@ -25,7 +25,7 @@ public class Client
         out.println("12345");
     }
 
-    public void disconnect()
+    public void disconnect() throws Exception
     {
         in.close();
         out.close();

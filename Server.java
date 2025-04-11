@@ -1,10 +1,12 @@
 import java.util.*;
 import java.net.*;
+import java.time.LocalDateTime;
 import java.io.*;
 
 public class Server 
 {
     private ServerSocket serverSocket;
+    private List<LocalDateTime> connectionTimes = new ArrayList<>();
 
     public void serve(int expectedClients)
     {
@@ -25,7 +27,9 @@ public class Server
                     clientSocket.close();
                     continue;
                 }
-                
+
+                // Connection Time
+                connectionTimes.add(LocalDateTime.now());
             }
 
             // exit server if exception
@@ -34,5 +38,15 @@ public class Server
                 e.printStackTrace();
             }
         }
+    }
+
+    public ArrayList<LocalDateTime> getConnectionTimes() 
+    {
+        ArrayList<LocalDateTime> copy;
+        synchronized (connectionTimes) 
+        {
+            copy = new ArrayList<>(connectionTimes);
+        }
+        return copy;
     }
 }

@@ -40,16 +40,25 @@ public class Server
                     try 
                     {
                         number = Integer.parseInt(input);
+                        int count = countFactors(number);
+                        out.println("The number " + number + " has " + count + " factors");
                     } 
                     catch (Exception e) 
                     {
-                        out.println("Invalid number format");
-                        clientSocket.close();
-                        return;
+                        out.println("There was an exception on the server");
                     }
-        
-                    int count = countFactors(number);
-                    out.println("The number " + number + " has " + count + " factors");
+
+                    finally 
+                    {
+                        try 
+                        {
+                            clientSocket.close();
+                        } 
+                        catch (IOException e) 
+                        {
+                            e.printStackTrace();
+                        }
+                    }
                 }
 
                 catch (Exception e)

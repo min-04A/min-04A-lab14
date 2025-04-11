@@ -8,8 +8,13 @@ import java.io.*;
 public class Server 
 {
     private ServerSocket serverSocket;
-    private List<LocalDateTime> connectionTimes = new ArrayList<>();
+    private List<LocalDateTime> connectionTimes = Collections.synchronizedList(new ArrayList<>());
     private ExecutorService threadPool = Executors.newCachedThreadPool();
+
+    public Server(int port) throws Exception 
+    {
+        this.serverSocket = new ServerSocket(port);
+    }
 
     public void serve(int expectedClients)
     {
@@ -43,7 +48,8 @@ public class Server
                     try 
                     {
                         number = Integer.parseInt(input);
-                        int count = countFactors(number);
+
+                        int count = countFactors((int)number);
                         out.println("The number " + number + " has " + count + " factors");
                     } 
                     catch (Exception e) 
@@ -53,14 +59,7 @@ public class Server
 
                     finally 
                     {
-                        try 
-                        {
                             clientSocket.close();
-                        } 
-                        catch (IOException e) 
-                        {
-                            e.printStackTrace();
-                        }
                     }
                 }
 
@@ -78,12 +77,13 @@ public class Server
         }
     }
 
-    public ArrayList<LocalDateTime> getConnectionTimes() 
+    public ArrayList<LocalDateTime> getConnectedTimes() 
     {
         ArrayList<LocalDateTime> copy;
         synchronized (connectionTimes) 
         {
             copy = new ArrayList<>(connectionTimes);
+            Collections.sort(copy);
         }
         return copy;
     }
@@ -108,7 +108,7 @@ public class Server
             serverSocket.close();
             threadPool.shutdownNow();
         } 
-        catch (IOException e) 
+        catch (Exception e) 
         {
             e.printStackTrace();
         }

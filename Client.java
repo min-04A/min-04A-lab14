@@ -30,4 +30,10 @@ public class Client
         in.close();
         out.close();
     }
+
+    public String request(String number) throws Exception 
+    {
+        out.println(number);
+        return in.readLine();
+    }
 }

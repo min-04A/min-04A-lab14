@@ -1,4 +1,6 @@
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.net.*;
 import java.time.LocalDateTime;
 import java.io.*;
@@ -7,6 +9,7 @@ public class Server
 {
     private ServerSocket serverSocket;
     private List<LocalDateTime> connectionTimes = new ArrayList<>();
+    private ExecutorService threadPool = Executors.newCachedThreadPool();
 
     public void serve(int expectedClients)
     {
@@ -96,5 +99,18 @@ public class Server
             }
         }
         return count;
+    }
+
+    public void disconnect() 
+    {
+        try 
+        {
+            serverSocket.close();
+            threadPool.shutdownNow();
+        } 
+        catch (IOException e) 
+        {
+            e.printStackTrace();
+        }
     }
 }

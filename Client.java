@@ -29,6 +29,7 @@ public class Client
     {
         in.close();
         out.close();
+        socket.close();
     }
 
     public String request(String number) throws Exception 

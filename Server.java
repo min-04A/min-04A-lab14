@@ -30,6 +30,32 @@ public class Server
 
                 // Connection Time
                 connectionTimes.add(LocalDateTime.now());
+
+                // multi-threads to control many clients
+                try 
+                {
+                    String input = in.readLine();
+                    int number;
+        
+                    try 
+                    {
+                        number = Integer.parseInt(input);
+                    } 
+                    catch (Exception e) 
+                    {
+                        out.println("Invalid number format");
+                        clientSocket.close();
+                        return;
+                    }
+        
+                    int count = countFactors(number);
+                    out.println("The number " + number + " has " + count + " factors");
+                }
+
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
 
             // exit server if exception
@@ -48,5 +74,18 @@ public class Server
             copy = new ArrayList<>(connectionTimes);
         }
         return copy;
+    }
+
+    private int countFactors(int number) 
+    {
+        int count = 0;
+        for (int i = 1; i <= number; i++) 
+        {
+            if (number % i == 0)
+            {
+                count++;
+            }
+        }
+        return count;
     }
 }

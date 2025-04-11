@@ -16,6 +16,16 @@ public class Server
                 Socket clientSocket = serverSocket.accept();
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+
+                // Check the passcode
+                String passcode = in.readLine();
+                if(!"12345".equals(passcode))
+                {
+                    out.println("couldn't handshake");
+                    clientSocket.close();
+                    continue;
+                }
+                
             }
 
             // exit server if exception

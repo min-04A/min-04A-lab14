@@ -24,49 +24,7 @@ public class Server
             try
             {
                 Socket clientSocket = serverSocket.accept();
-                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-
-                // Check the passcode
-                String passcode = in.readLine();
-                if(!"12345".equals(passcode))
-                {
-                    out.println("couldn't handshake");
-                    clientSocket.close();
-                    continue;
-                }
-
-                // Connection Time
-                connectionTimes.add(LocalDateTime.now());
-
-                // multi-threads to control many clients
-                try 
-                {
-                    String input = in.readLine();
-                    int number;
-        
-                    try 
-                    {
-                        number = Integer.parseInt(input);
-
-                        int count = countFactors((int)number);
-                        out.println("The number " + number + " has " + count + " factors");
-                    } 
-                    catch (Exception e) 
-                    {
-                        out.println("There was an exception on the server");
-                    }
-
-                    finally 
-                    {
-                            clientSocket.close();
-                    }
-                }
-
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                threadPool.submit(() -> clientHandle(clientSocket));
             }
 
             // exit server if exception
@@ -74,6 +32,54 @@ public class Server
             {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void clientHandle(Socket clientSocket)
+    {
+        try
+        {
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+
+            // Check the passcode
+            String passcode = in.readLine();
+            if(!"12345".equals(passcode))
+            {
+                out.println("couldn't handshake");
+                clientSocket.close();
+                return;
+            }
+
+            // Connection Time
+            connectionTimes.add(LocalDateTime.now());
+
+            String input = in.readLine();
+            int number;
+
+            // multi-threads to control many clients
+            try 
+            {
+                number = Integer.parseInt(input);
+
+                int count = countFactors((int)number);
+                out.println("The number " + number + " has " + count + " factors");
+            } 
+            
+            catch (Exception e) 
+            {
+                out.println("There was an exception on the server");
+            }
+
+            finally 
+            {
+                clientSocket.close();
+            }
+        }
+
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
 
